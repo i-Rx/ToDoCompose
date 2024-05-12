@@ -89,7 +89,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier
                         .fillMaxSize()
                         .semantics {
-                            contentDescription = "My Screen"
+                            contentDescription = "MyScreen"
                         },
                 ){
                     paddingValues ->
@@ -105,11 +105,8 @@ class MainActivity : ComponentActivity() {
                             ){
                                 Text(text = authViewModel.error.value)
                             }
-
                         }
-                        NavGraph(
-                            authViewModel = authViewModel,
-                            navController =navController)
+                        NavGraph(authViewModel,navController )
                     }
                     if (showBottomBar){
                         BottomBar(navController)

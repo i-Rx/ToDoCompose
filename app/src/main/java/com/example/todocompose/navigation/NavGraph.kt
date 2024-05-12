@@ -8,6 +8,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
@@ -27,14 +29,15 @@ fun NavGraph(
     authViewModel: AuthViewModel,
     navController: NavHostController
 ) {
+    val context = LocalContext.current
     NavHost(
         navController = navController,
-        startDestination = authViewModel.isSigndIn.value,
+        startDestination = authViewModel.isSignedIn.value,
     )
     {
         authNavigations(navController, authViewModel)
         mainNavigation(navController,authViewModel) {
-            authViewModel.logout()
+            authViewModel.logout(context)
         }
     }
 }
@@ -113,8 +116,8 @@ fun NavGraphBuilder.mainNavigation(
 
 }
 
-fun NavOptionsBuilder.popUpToTop(navController: NavHostController){
-    popUpTo(navController.currentBackStackEntry?.destination?.route?:return){
+fun NavOptionsBuilder.popUpToTop(navController: NavController) {
+    popUpTo(navController.currentBackStackEntry?.destination?.route ?: return) {
         saveState = true
         inclusive = true
     }

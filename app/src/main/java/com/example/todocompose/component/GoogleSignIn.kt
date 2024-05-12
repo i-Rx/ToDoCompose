@@ -56,7 +56,7 @@ fun GoogleSignIn(authViewModel: AuthViewModel){
             verticalArrangement = Arrangement.Center
         ) {
             if (user == null) {
-                authViewModel.isSigndIn.value = Screen.Authenticaion.route
+                authViewModel.isSignedIn.value = Screen.Authenticaion.route
                 //  Text(text = "Not Logged in")
                 Button(onClick = {
                     val gso =
@@ -77,7 +77,7 @@ fun GoogleSignIn(authViewModel: AuthViewModel){
                 }
             } else {
 
-                authViewModel.isSigndIn.value = Screen.MainApp.route
+                authViewModel.isSignedIn.value = Screen.MainApp.route
 //
 //                Text(text = "Welcome ${user?.displayName}")
 //                AsyncImage(

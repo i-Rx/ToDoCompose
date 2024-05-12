@@ -26,16 +26,18 @@ import com.example.todocompose.navigation.popUpToTop
 import com.example.todocompose.ui.theme.PrimaryColor
 
 @Composable
-fun BottomBar(navController: NavHostController){
+fun BottomBar(navController: NavHostController) {
 
-    val navigationSelectedItem = rememberSaveable { mutableIntStateOf(0)
-
+    val navigationSelectedItem = rememberSaveable {
+        mutableIntStateOf(0)
     }
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .padding(12.dp),
-        contentAlignment = Alignment.BottomCenter){
 
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(12.dp),
+        contentAlignment = Alignment.BottomCenter
+    ) {
         Row(
             modifier = Modifier
                 .shadow(16.dp)
@@ -45,38 +47,43 @@ fun BottomBar(navController: NavHostController){
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            BottomNavigationItem().bottomNavigationItem()
+            BottomNavigationItem().bottomNavigationItems()
                 .forEachIndexed { index, bottomNavigationItem ->
-                    if (bottomNavigationItem.route == Screen.MainApp.AddScreen?.route) {
+                    if (bottomNavigationItem.route == Screen.MainApp.AddScreen.route) {
                         Icon(
                             bottomNavigationItem.icon,
-                            contentDescription = "",
-                            modifier = Modifier.size(75.dp)
+                            "",
+                            modifier = Modifier
+                                .size(75.dp)
                                 .clickable {
-                                    navigationSelectedItem.intValue = index
+                                    navigationSelectedItem.value = index
                                     navController.navigate(bottomNavigationItem.route) {
                                         popUpToTop(navController)
                                         launchSingleTop = true
+                                        // Restore state when reselecting a previously selected item
                                         restoreState = true
                                     }
                                 },
                             tint = PrimaryColor
                         )
                     } else {
-                        Icon(bottomNavigationItem.icon,
-                            contentDescription = "",
-                            modifier = Modifier.clickable {
-                                navigationSelectedItem.intValue = index
-                                navController.navigate(bottomNavigationItem.route) {
-                                    popUpToTop(navController)
-                                    launchSingleTop = true
-                                    restoreState = true
+                        Icon(
+                            bottomNavigationItem.icon,
+                            "",
+                            modifier = Modifier
+                                .clickable {
+                                    navigationSelectedItem.value = index
+                                    navController.navigate(bottomNavigationItem.route) {
+                                        popUpToTop(navController)
+                                        launchSingleTop = true
+                                        // Restore state when reselecting a previously selected item
+                                        restoreState = true
+                                    }
                                 }
-                            }
                                 .padding(12.dp),
-                            tint = if (
-                                navigationSelectedItem.intValue == index) PrimaryColor else Color.Gray.copy(
-                                0.5f)
+                            tint = if (navigationSelectedItem.value == index) PrimaryColor else Color.Gray.copy(
+                                0.5f
+                            )
                         )
                     }
                 }
