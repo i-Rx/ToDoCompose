@@ -14,7 +14,7 @@ sealed class Screen(val route: String) {
         data object Home : Screen(route = "home_screen")
         data object TaskByDate : Screen(route = "task_by_date_screen")
         data object AddScreen : Screen(route = "add_screen")
-        data object CategorrScreen : Screen(route = "category_screen")
+        data object CategoryScreen : Screen(route = "category_screen")
         data object StaticsScreen : Screen(route = "statics_screen")
     }
 
@@ -34,7 +34,7 @@ data class BottomNavigationItem(
             BottomNavigationItem(icon = Icons.Filled.Home, route = Screen.MainApp.Home.route),
             BottomNavigationItem(icon = Icons.Filled.List, route = Screen.MainApp.TaskByDate.route),
             BottomNavigationItem(icon = Icons.Filled.AddCircle, route = Screen.MainApp.AddScreen.route),
-            BottomNavigationItem(icon = Icons.Filled.Settings, route = Screen.MainApp.CategorrScreen.route),
+            BottomNavigationItem(icon = Icons.Filled.Settings, route = Screen.MainApp.CategoryScreen.route),
             BottomNavigationItem(icon = Icons.Filled.DateRange, route = Screen.MainApp.StaticsScreen.route)
         )
     }

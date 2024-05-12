@@ -29,8 +29,8 @@ import com.example.todocompose.ui.theme.PrimaryColor
 fun BottomBar(navController: NavHostController){
 
     val navigationSelectedItem = rememberSaveable { mutableIntStateOf(0)
-    }
 
+    }
     Box(modifier = Modifier
         .fillMaxSize()
         .padding(12.dp),

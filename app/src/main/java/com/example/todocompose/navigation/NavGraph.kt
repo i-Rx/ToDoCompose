@@ -14,10 +14,12 @@ import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.example.todocompose.screens.HomeScreen
 import com.example.todocompose.screens.auth.AuthViewModel
 import com.example.todocompose.screens.auth.LoginScreen
 import com.example.todocompose.screens.auth.SingUpScreen
 import com.example.todocompose.screens.auth.SpalshScreen
+import kotlin.math.log
 
 
 @Composable
@@ -31,7 +33,7 @@ fun NavGraph(
     )
     {
         authNavigations(navController, authViewModel)
-        mainNavigation(navController) {
+        mainNavigation(navController,authViewModel) {
             authViewModel.logout()
         }
     }
@@ -60,7 +62,8 @@ fun NavGraphBuilder.authNavigations(
 
 fun NavGraphBuilder.mainNavigation(
     navController: NavHostController,
-    Logout: () -> Unit
+    authViewModel: AuthViewModel,
+    logout: () -> Unit
 ) {
     navigation(
         startDestination = Screen.MainApp.Home.route,
@@ -69,22 +72,25 @@ fun NavGraphBuilder.mainNavigation(
 
     {
         composable(route = Screen.MainApp.Home.route){
-            Column(
-              Modifier.fillMaxSize()) {}
+          HomeScreen(navController = navController)
         }
     }
 
 
     composable(route = Screen.MainApp.TaskByDate.route){
         Column(
-            Modifier.fillMaxSize().background(Color.Yellow)) {}
+            Modifier
+                .fillMaxSize()
+                .background(Color.Yellow)) {}
     }
 
-    composable(route = Screen.MainApp.CategorrScreen.route){
+    composable(route = Screen.MainApp.CategoryScreen.route){
         Column(
-            Modifier.fillMaxSize().background(Color.Red)) {
+            Modifier
+                .fillMaxSize()
+                .background(Color.Red)) {
             Button(onClick = {
-                Logout.invoke()
+                logout.invoke()
             }){
                 Text(text = "Sign Out")
             }
@@ -93,12 +99,16 @@ fun NavGraphBuilder.mainNavigation(
 
     composable(route = Screen.MainApp.AddScreen.route){
         Column(
-            Modifier.fillMaxSize().background(Color.Magenta)) {}
+            Modifier
+                .fillMaxSize()
+                .background(Color.Magenta)) {}
     }
 
     composable(route = Screen.MainApp.StaticsScreen.route){
         Column(
-            Modifier.fillMaxSize().background(Color.Green)) {}
+            Modifier
+                .fillMaxSize()
+                .background(Color.Green)) {}
     }
 
 }

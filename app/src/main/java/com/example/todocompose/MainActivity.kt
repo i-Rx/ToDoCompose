@@ -81,7 +81,7 @@ class MainActivity : ComponentActivity() {
                         Screen.MainApp.Home.route -> true
                         Screen.MainApp.AddScreen.route -> true
                         Screen.MainApp.TaskByDate.route -> true
-                        Screen.MainApp.CategorrScreen.route -> true
+                        Screen.MainApp.CategoryScreen.route -> true
                         Screen.MainApp.StaticsScreen.route -> true
                         else -> false
                 }
@@ -115,78 +115,6 @@ class MainActivity : ComponentActivity() {
                         BottomBar(navController)
                     }
                 }
-            }
-        }
-    }
-}
-
-
-@Composable
-fun GoogleSignIn(authViewModel: AuthViewModel){
-    Column(
-        modifier = Modifier
-            .padding(9.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        var user by remember {
-            mutableStateOf(Firebase.auth.currentUser)
-        }
-        val launcher = rememberFirebaseAuthLauncher(
-            onAuthComplete = { result ->
-                user = result.user
-            },
-            onAuthError = {
-                user = null
-                println()
-            })
-        val token =
-            "286534524044-jug96mog9sjidekdllaedlrpd87tuhku.apps.googleusercontent.com"
-        val context = LocalContext.current
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            if (user == null) {
-                authViewModel.isSigndIn.value = Screen.MainApp.route
-              //  Text(text = "Not Logged in")
-                Button(onClick = {
-                    val gso =
-                        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                            .requestIdToken(token)
-                            .requestEmail()
-                            .build()
-                    val googleSignInClient = GoogleSignIn.getClient(context, gso)
-                    launcher.launch(googleSignInClient.signInIntent)
-                },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White, contentColor = Color.Black),
-                    shape = RoundedCornerShape(100f),
-                    modifier = Modifier.size(70.dp)
-                    ) {
-//                    Text(text = " Sign in via Google ")
-                    Image(painter = painterResource(id = R.drawable.google), contentDescription = null)
-                }
-            } else {
-
-                authViewModel.isSigndIn.value = Screen.MainApp.route
-//
-//                Text(text = "Welcome ${user?.displayName}")
-//                AsyncImage(
-//                    model = user?.photoUrl,
-//                    contentDescription = null,
-//                    Modifier
-//                        .clip(CircleShape)
-//                        .size(45.dp)
-//                )
-//                Button(
-//                    onClick = {
-//                        Firebase.auth.signOut()
-//                        user = null
-//                    }) {
-//                    Text(text = "Sign Out")
-//
-//                }
             }
         }
     }

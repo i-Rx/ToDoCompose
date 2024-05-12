@@ -13,12 +13,14 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(): ViewModel() {
     private val auth = Firebase.auth
     var isSigndIn=
-        if (auth.currentUser == null)
-        mutableStateOf(Screen.Authenticaion.route)
-        else mutableStateOf(Screen.MainApp.route)
+        if (auth.currentUser != null) {
+            mutableStateOf(Screen.Authenticaion.route)
+        }
+        else {
+            mutableStateOf(Screen.MainApp.route)
+        }
 
     val error = mutableStateOf("")
-
 
     fun login(email:String,password:String){
         auth.signInWithEmailAndPassword(email, password)
@@ -35,8 +37,6 @@ class AuthViewModel @Inject constructor(): ViewModel() {
         auth.signOut()
         isSigndIn.value=Screen.Authenticaion.route
     }
-
-
 
     fun signup(email: String,password: String) {
         auth.createUserWithEmailAndPassword(email, password)

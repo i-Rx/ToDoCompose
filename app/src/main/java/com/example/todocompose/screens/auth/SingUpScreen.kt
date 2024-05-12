@@ -29,11 +29,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.todocompose.GoogleSignIn
-import com.example.todocompose.component.LoginWithGoogle
+import com.example.todocompose.component.GoogleSignIn
 import com.example.todocompose.navigation.Screen
 import com.example.todocompose.ui.theme.PrimaryColor
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 
 @Composable
 fun SingUpScreen(navController: NavHostController, authViewModel: AuthViewModel) {
