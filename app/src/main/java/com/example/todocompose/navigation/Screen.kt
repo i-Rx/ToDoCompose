@@ -6,6 +6,9 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.List
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class Screen(val route: String) {
@@ -29,13 +32,32 @@ data class BottomNavigationItem(
     val icon:ImageVector = Icons.Filled.Home,
     val route: String =""
 ){
-    fun bottomNavigationItems(): List<BottomNavigationItem>{
+
+    //function to get the list of bottomNavigationItems
+    fun bottomNavigationItems() : List<BottomNavigationItem> {
         return listOf(
-            BottomNavigationItem(icon = Icons.Filled.Home, route = Screen.MainApp.Home.route),
-            BottomNavigationItem(icon = Icons.Filled.List, route = Screen.MainApp.TaskByDate.route),
-            BottomNavigationItem(icon = Icons.Filled.AddCircle, route = Screen.MainApp.AddScreen.route),
-            BottomNavigationItem(icon = Icons.Filled.Settings, route = Screen.MainApp.CategoryScreen.route),
-            BottomNavigationItem(icon = Icons.Filled.DateRange, route = Screen.MainApp.StaticsScreen.route),
+            BottomNavigationItem(
+                icon = Icons.Outlined.Home,
+                route = Screen.MainApp.Home.route
+            ),
+            BottomNavigationItem(
+                icon = Icons.Outlined.List,
+                route = Screen.MainApp.TaskByDate.route
+            ),
+            BottomNavigationItem(
+                icon = Icons.Filled.AddCircle,
+                route = Screen.MainApp.AddScreen.route
+            ),
+
+            BottomNavigationItem(
+                icon = Icons.Outlined.Settings,
+                route = Screen.MainApp.CategoryScreen.route
+            ),
+
+            BottomNavigationItem(
+                icon = Icons.Filled.DateRange,
+                route = Screen.MainApp.StaticsScreen.route
+            ),
         )
     }
 }

@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -35,6 +36,9 @@ import com.example.todocompose.ui.theme.PrimaryColor
 
 @Composable
 fun SingUpScreen(navController: NavHostController, authViewModel: AuthViewModel) {
+    val emailState = remember { mutableStateOf(TextFieldValue()) }
+    val passwordState = remember { mutableStateOf(TextFieldValue()) }
+    val userName = remember { mutableStateOf(TextFieldValue()) }
 
     Column(
         modifier = Modifier
@@ -128,7 +132,10 @@ fun SingUpScreen(navController: NavHostController, authViewModel: AuthViewModel)
 
         ) {
             Button(
-                onClick = { navController.navigate(Screen.Authenticaion.Login.route) },
+                onClick = {
+                    if(emailState.value.text.isNotEmpty() && passwordState.value.text.isNotEmpty()) {
+                        authViewModel.signup(emailState.value.text.trim(), passwordState.value.text.trim())
+                    } },
                 Modifier
                     .fillMaxWidth(1f)
                     .height(50.dp),
@@ -178,7 +185,7 @@ fun SingUpScreen(navController: NavHostController, authViewModel: AuthViewModel)
                     )
                     Text(
                         modifier = Modifier.clickable {
-                            navController.navigate(Screen.Authenticaion.Login.route)
+//                            navController.navigate(Screen.Authenticaion.Login.route)
                         },
                         text = "Sign In",
                         fontSize = 14.sp,

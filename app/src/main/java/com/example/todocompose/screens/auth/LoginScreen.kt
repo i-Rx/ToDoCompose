@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,6 +39,10 @@ import com.example.todocompose.ui.theme.PrimaryColor
 
 @Composable
 fun LoginScreen(navController: NavHostController, authViewModel: AuthViewModel) {
+    val emailState = remember { mutableStateOf(TextFieldValue()) }
+    val passwordState = remember { mutableStateOf(TextFieldValue()) }
+
+
     Column(
         modifier = Modifier
 //            .background(Color.LightGray)
@@ -118,7 +123,10 @@ fun LoginScreen(navController: NavHostController, authViewModel: AuthViewModel) 
         Spacer(modifier = Modifier.padding(30.dp))
 
         Button(
-            onClick = { navController.navigate(Screen.Authenticaion.Login.route) },
+            onClick = {
+                if (emailState.value.text.isNotEmpty() && passwordState.value.text.isNotEmpty()) {
+                    authViewModel.login(emailState.value.text, passwordState.value.text)
+                } },
             Modifier
                 .fillMaxWidth(.8f)
                 .height(50.dp),
@@ -164,7 +172,7 @@ fun LoginScreen(navController: NavHostController, authViewModel: AuthViewModel) 
                 )
                 Text(
                     modifier = Modifier.clickable {
-                        navController.navigate(Screen.Authenticaion.SignUp.route)
+//                        navController.navigate(Screen.Authenticaion.SignUp.route)
                     },
                     text = "Sign up ",
                     fontSize = 14.sp,

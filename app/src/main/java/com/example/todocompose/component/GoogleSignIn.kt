@@ -51,12 +51,13 @@ fun GoogleSignIn(authViewModel: AuthViewModel){
         val token =
             "286534524044-jug96mog9sjidekdllaedlrpd87tuhku.apps.googleusercontent.com"
         val context = LocalContext.current
+
+
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             if (user == null) {
-                authViewModel.isSignedIn.value = Screen.Authenticaion.route
                 //  Text(text = "Not Logged in")
                 Button(onClick = {
                     val gso =
@@ -75,27 +76,8 @@ fun GoogleSignIn(authViewModel: AuthViewModel){
 //                    Text(text = " Sign in via Google ")
                     Image(painter = painterResource(id = R.drawable.google), contentDescription = null)
                 }
-            } else {
-
-                authViewModel.isSignedIn.value = Screen.MainApp.route
-//
-//                Text(text = "Welcome ${user?.displayName}")
-//                AsyncImage(
-//                    model = user?.photoUrl,
-//                    contentDescription = null,
-//                    Modifier
-//                        .clip(CircleShape)
-//                        .size(45.dp)
-//                )
-//                Button(
-//                    onClick = {
-//                        Firebase.auth.signOut()
-//                        user = null
-//                    }) {
-//                    Text(text = "Sign Out")
-//
-//                }
             }
-        }
+            }
+
     }
 }
