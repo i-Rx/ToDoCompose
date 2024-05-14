@@ -40,6 +40,7 @@ fun SingUpScreen(navController: NavHostController, authViewModel: AuthViewModel)
     val passwordState = remember { mutableStateOf(TextFieldValue()) }
     val userName = remember { mutableStateOf(TextFieldValue()) }
 
+
     Column(
         modifier = Modifier
 //            .background(Color.LightGray)
