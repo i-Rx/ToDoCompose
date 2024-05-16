@@ -13,9 +13,7 @@ data class Tags(
     @ColumnInfo(name = "tag_name")
     val name: String,
     @ColumnInfo(name = "tag_color")
-    val color: String,
-//    @ColumnInfo(name = "tag_border")
-//    val borderColor: String
+    val color: String
 )
 
 
@@ -25,5 +23,5 @@ data class TaskWithTagLists(
         parentColumn = "tag_name",
         entityColumn = "task_tag_name"
     )
-    val tasks: List<Task>
+    var tasks: List<Task>
 )

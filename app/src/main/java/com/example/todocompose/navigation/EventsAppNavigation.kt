@@ -1,21 +1,14 @@
 package com.example.todocompose.navigation
 
-import android.window.SplashScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -24,12 +17,16 @@ import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.example.todocompose.screens.HomeScreen
+import com.example.todocompose.screens.task.HomeScreen
 import com.example.todocompose.screens.auth.AuthViewModel
 import com.example.todocompose.screens.auth.LoginScreen
 import com.example.todocompose.screens.auth.SingUpScreen
 import com.example.todocompose.screens.auth.SpalshScreen
+import com.example.todocompose.screens.task.AddTaskScreen
+import com.example.todocompose.screens.task.AddTaskViewModel
+import com.example.todocompose.screens.task.TaskByDateScreen
 import com.example.todocompose.screens.task.TaskViewModel
+import com.google.firebase.auth.FirebaseUser
 
 
 @Composable
@@ -43,11 +40,13 @@ fun EventsAppNavigation(
         startDestination = authViewModel.isSignedIn.value,
     ) {
         authNavigation(navController, authViewModel)
-        mainAppNavigation(navController){
-            authViewModel.logout(context)
+        mainAppNavigation(navController, logout = {
+            authViewModel.logout(context) }) {
+            authViewModel.auth.currentUser
         }
     }
 }
+
 
 
 fun NavGraphBuilder.authNavigation(
@@ -74,25 +73,20 @@ fun NavGraphBuilder.authNavigation(
 
 fun NavGraphBuilder.mainAppNavigation(
     navController: NavHostController,
-    logout: () -> Unit
-) {
+    logout: () -> Unit,
+    userName: () -> FirebaseUser?
+)  {
     navigation(
         startDestination = Screen.MainApp.Home.route,
         route = Screen.MainApp.route,
     ) {
         composable(Screen.MainApp.Home.route) {
-        HomeScreen(navController)
+            HomeScreen(userName.invoke())
         }
 
-
         composable(Screen.MainApp.TaskByDate.route) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Yellow)
-            ) {
-
-            }
+            val viewmodel: TaskViewModel = hiltViewModel()
+            TaskByDateScreen(viewmodel)
         }
         composable(Screen.MainApp.CategoryScreen.route) {
             Column(
@@ -108,14 +102,11 @@ fun NavGraphBuilder.mainAppNavigation(
             }
         }
         composable(Screen.MainApp.AddScreen.route) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Magenta)
-            ) {
-
-            }
+            val viewmodel: AddTaskViewModel = hiltViewModel()
+            viewmodel.taskDate.value = it.savedStateHandle.get<String>("selectedDate").orEmpty()
+            AddTaskScreen(navController, viewmodel)
         }
+
         composable(Screen.MainApp.StaticsScreen.route) {
             Column(
                 modifier = Modifier
@@ -125,6 +116,11 @@ fun NavGraphBuilder.mainAppNavigation(
 
             }
         }
+        composable(Screen.MainApp.DateDialog.route) {
+
+       // MonthlyHorizontalCalendarView(navController)
+        }
+
     }
 }
 

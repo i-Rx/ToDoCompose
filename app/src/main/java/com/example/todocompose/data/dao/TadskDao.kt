@@ -34,5 +34,12 @@ interface TaskDao {
     @Query("Select * FROM tags_table WHERE tag_name = :tagName")
     fun getTagsWithTask(tagName: String): Flow<List<TaskWithTagLists>>
 
+    @Query("Select * FROM task_table WHERE date LIKE :date")
+     fun sortByCreationDate(date: String): Flow<List<Task>>
+
+     @Upsert
+     suspend fun upsertTagList(tag: List<Tags>)
+
+
 
 }

@@ -131,7 +131,7 @@ class TaskDaoTest {
     )
     val tag2 = Tags(
         "Work",
-        "color"
+        "color",
     )
         taskDao.upsertTag(tag)
         taskDao.upsertTag(tag2)
@@ -147,7 +147,7 @@ class TaskDaoTest {
         )
         val tag2 = Tags(
             "Work",
-            "color"
+            "color",
         )
         val task = Task(
             taskId = 1,

@@ -34,6 +34,7 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled=true
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -69,6 +70,10 @@ dependencies {
     //navigation
     implementation ("androidx.navigation:navigation-compose:2.6.0")
 
+
+    // The compose calendar library
+    implementation("com.kizitonwose.calendar:compose:2.5.1")
+    coreLibraryDesugaring ("com.android.tools:desugar_jdk_libs:2.0.4")
 
     implementation("io.coil-kt:coil-compose:2.6.0")
 

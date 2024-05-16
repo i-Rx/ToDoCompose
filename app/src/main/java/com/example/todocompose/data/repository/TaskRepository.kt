@@ -38,4 +38,12 @@ class TaskRepository @Inject constructor(
     fun getAllTags(): Flow<List<Tags>> {
         return taskDao.getAllTags()
     }
+
+    suspend fun insertTagList(tagList: List<Tags>) {
+        return taskDao.upsertTagList(tagList)
+    }
+
+    fun sortTasksByTag(date: String): Flow<List<Task>> {
+        return taskDao.sortByCreationDate(date)
+    }
 }

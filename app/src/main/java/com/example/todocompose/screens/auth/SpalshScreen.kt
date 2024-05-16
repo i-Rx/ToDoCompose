@@ -20,6 +20,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -36,60 +39,72 @@ import com.example.todocompose.ui.theme.PrimaryColor
 @Composable
 fun SpalshScreen(navController: NavHostController) {
     Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-        
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-        Spacer(modifier = Modifier.height(60.dp))
-            Image(
-                painter = painterResource(id = R.drawable.intro_image),
-                contentDescription = ""
-            )
-        Text(
-            text= buildAnnotatedString {
-                append("Dailoz")
-                withStyle(
-                    style =  SpanStyle(
-                        color = Color.Red)){
-                append(".")
-                }
+        Modifier
+            .fillMaxSize()
+            .semantics {
+                testTag = "SplashScreen"
             },
-            fontSize = 45.sp,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(modifier = Modifier.semantics {
+            testTag = "intro image"
+        }, painter = painterResource(id = R.drawable.intro_image), contentDescription = null)
+        Text(
+            modifier = Modifier
+                .padding(vertical = 8.dp)
+                .semantics {
+                    contentDescription = "title text"
+                },
+            text = "Dailoz",
             color = PrimaryColor,
-            fontWeight = FontWeight.ExtraBold)
-//            Spacer(modifier = Modifier.padding(10.dp))
-            Text( textAlign = TextAlign.Center,
-                text = "Plan what you will do to be more organized for today, tomorrow and beyond")
+            fontWeight = FontWeight.Bold,
+            fontSize = 22.sp
+        )
+        Text(
+            modifier = Modifier
+                .padding(horizontal = 22.dp)
+                .semantics {
+                    contentDescription = "description text"
+                },
+            textAlign = TextAlign.Center,
+            text = "Plan what you will do to be more organized for today, tomorrow and beyond",
+        )
 
-            Spacer(modifier = Modifier.padding(50.dp))
-
-        Button(onClick = { navController.navigate(Screen.Authenticaion.Login.route) },
-            Modifier
-                .fillMaxWidth()
-                .height(45.dp),
-            colors = ButtonDefaults.buttonColors(PrimaryColor),
-            shape = RoundedCornerShape(18.dp)
+        Spacer(modifier = Modifier.height(50.dp))
+        Button(
+            onClick = {
+                navController.navigate(Screen.Authenticaion.Login.route)
+            },
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .padding(12.dp)
+                .semantics {
+                    testTag = "Login Button"
+                },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = PrimaryColor
+            )
         ) {
-            Text(text = "Login", fontSize = 20.sp)
+            Text(
+                modifier = Modifier.padding(vertical = 8.dp), text = "Login",
+                fontSize = 16.sp,
+                color = Color.White
+            )
+
         }
-        Box(modifier = Modifier
-            .fillMaxWidth(.9f)
-            .height(80.dp)
-            .padding(22.dp),
-            Alignment.Center){
-            Text(text = "Sign up",
-                Modifier.clickable {
-                navController.navigate(Screen.Authenticaion.SignUp.route)
-            })
-        }
+        Text(
+            modifier = Modifier
+                .padding(vertical = 8.dp)
+                .clickable {
+                    navController.navigate(Screen.Authenticaion.SignUp.route)
 
-
+                },
+            text = "Sign Up",
+            color = PrimaryColor,
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+        )
     }
-    
-    }
-
-
-
+}

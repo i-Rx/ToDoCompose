@@ -24,35 +24,14 @@ class TaskViewModel @Inject constructor(
             taskRepository.insertTag(
                 Tags(
                     "Work",
-                    "color"
+                    "color",
+
                 )
             )
             taskRepository.insertTag(
                 Tags(
                     "Personal",
-                    "color"
-                )
-            )
-            taskRepository.insertTask(
-                Task(
-                    title = "title",
-                    description = "description",
-                    date = "2024-01-01",
-                    taskType = TaskType.Ongoing.type,
-                    timeFrom = "4:00",
-                    timeTo = "5:00",
-                    tagName = "Work"
-                )
-            )
-            taskRepository.insertTask(
-                Task(
-                    title = "title2",
-                    description = "description",
-                    date = "2024-05-05",
-                    taskType = TaskType.Ongoing.type,
-                    timeFrom = "10:00",
-                    timeTo = "11:00",
-                    tagName = "Personal"
+                    "color",
                 )
             )
         }
