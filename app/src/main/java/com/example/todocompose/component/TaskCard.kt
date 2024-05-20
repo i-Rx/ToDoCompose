@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,26 +35,24 @@ import com.example.todocompose.ui.theme.Navy
 import com.example.todocompose.ui.theme.Pink80
 import com.example.todocompose.ui.theme.PrimaryColor
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun TaskCard(
-    taskTitle: String,
-    timeFrom: String?,
-    timeTo: String?,
-    tag: Tags) {
+fun TaskCard(taskTitle: String, timeFrom: String?, timeTo: String?, tag: List<Tags?>) {
+    val dividerHeight = remember {
+        mutableStateOf(50.dp)
+    }
 
-    val dividerHeight = remember { mutableStateOf(50.dp) }
-    Color.White.toArgb().toShort()
     Card(
         modifier = Modifier
             .fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = Color(
-                tag?.color?.toIntOrNull() ?: PrimaryColor.toArgb()
-            ).copy(0.3f)
+                tag?.first()?.color?.toIntOrNull() ?: PrimaryColor.toArgb()
+            ).copy(0.1f)
         )
 
     ) {
-        Column {
+        Column() {
             Row(
                 Modifier
                     .fillMaxWidth()
@@ -66,7 +66,7 @@ fun TaskCard(
                             .height(dividerHeight.value)
                             .width(3.dp)
                             .background(
-                                Color(tag?.color?.toIntOrNull() ?: PrimaryColor.toArgb()),
+                                Color(tag?.first()?.color?.toIntOrNull() ?: PrimaryColor.toArgb()),
                                 RoundedCornerShape(16.dp)
                             )
                             .padding(0.dp, 40.dp)
@@ -100,28 +100,33 @@ fun TaskCard(
                 )
 
             }
-            Row(
+
+            FlowRow (
                 Modifier
                     .fillMaxWidth()
                     .padding(25.dp, 10.dp), Arrangement.spacedBy(10.dp)
             ) {
-                Box(
-                    Modifier
-                        .background(
-                            Color(tag?.color?.toIntOrNull() ?: PrimaryColor.toArgb()).copy(0.4f),
-                            RoundedCornerShape(16.dp)
-                        )
+                tag?.forEach {tag->
+                    Box(
+                        Modifier
+                            .background(
+                                Color(
+                                    tag?.color?.toIntOrNull() ?: PrimaryColor.toArgb()
+                                ).copy(0.4f),
+                                RoundedCornerShape(16.dp)
+                            )
 //                        .border(
 //                            1.dp,
 //                            Color(tag?.color?.toIntOrNull() ?: PrimaryColor.toArgb()),
 //                            RoundedCornerShape(16.dp)
 //                        )
-                ) {
-                    Text(
-                        text = tag?.name.orEmpty(),
-                        modifier = Modifier.padding(5.dp),
-                        color = Color.White
-                    )
+                    ) {
+                        Text(
+                            text = tag?.name.orEmpty(),
+                            modifier = Modifier.padding(5.dp),
+                            color = Color.White
+                        )
+                    }
                 }
             }
         }

@@ -3,29 +3,35 @@ package com.example.todocompose.navigation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
+import com.example.todocompose.component.MonthCalendarView
 import com.example.todocompose.screens.task.HomeScreen
 import com.example.todocompose.screens.auth.AuthViewModel
 import com.example.todocompose.screens.auth.LoginScreen
 import com.example.todocompose.screens.auth.SingUpScreen
 import com.example.todocompose.screens.auth.SpalshScreen
+import com.example.todocompose.screens.task.AddTagDialog
 import com.example.todocompose.screens.task.AddTaskScreen
+import com.example.todocompose.screens.task.CategoryScreen
 import com.example.todocompose.screens.task.AddTaskViewModel
 import com.example.todocompose.screens.task.TaskByDateScreen
 import com.example.todocompose.screens.task.TaskViewModel
+import com.example.todocompose.screens.task.TasksByCategory
 import com.google.firebase.auth.FirebaseUser
 
 
@@ -41,12 +47,12 @@ fun EventsAppNavigation(
     ) {
         authNavigation(navController, authViewModel)
         mainAppNavigation(navController, logout = {
-            authViewModel.logout(context) }) {
+            authViewModel.logout(context)
+        }) {
             authViewModel.auth.currentUser
         }
     }
 }
-
 
 
 fun NavGraphBuilder.authNavigation(
@@ -55,7 +61,7 @@ fun NavGraphBuilder.authNavigation(
 ) {
     navigation(
         startDestination = Screen.Authenticaion.Splash.route,
-        route =Screen.Authenticaion.route,
+        route = Screen.Authenticaion.route,
     ) {
         composable(Screen.Authenticaion.Splash.route) {
             SpalshScreen(navController)
@@ -75,32 +81,26 @@ fun NavGraphBuilder.mainAppNavigation(
     navController: NavHostController,
     logout: () -> Unit,
     userName: () -> FirebaseUser?
-)  {
+) {
     navigation(
         startDestination = Screen.MainApp.Home.route,
         route = Screen.MainApp.route,
     ) {
         composable(Screen.MainApp.Home.route) {
-            HomeScreen(userName.invoke())
+            val viewModel: TaskViewModel = hiltViewModel()
+            HomeScreen(userName.invoke(), navController, viewModel)
         }
 
         composable(Screen.MainApp.TaskByDate.route) {
             val viewmodel: TaskViewModel = hiltViewModel()
             TaskByDateScreen(viewmodel)
         }
+
         composable(Screen.MainApp.CategoryScreen.route) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Red)
-            ) {
-                Button(onClick = {
-                    logout.invoke()
-                }) {
-                    Text(text = "SignOut")
-                }
-            }
+            val taskViewModel: TaskViewModel = hiltViewModel()
+            CategoryScreen(userName.invoke(), taskViewModel, navController, logout)
         }
+
         composable(Screen.MainApp.AddScreen.route) {
             val viewmodel: AddTaskViewModel = hiltViewModel()
             viewmodel.taskDate.value = it.savedStateHandle.get<String>("selectedDate").orEmpty()
@@ -116,11 +116,39 @@ fun NavGraphBuilder.mainAppNavigation(
 
             }
         }
-        composable(Screen.MainApp.DateDialog.route) {
+        dialog(
+            Screen.MainApp.DateDialog.route, dialogProperties = DialogProperties(
+                dismissOnClickOutside = true,
+                dismissOnBackPress = true
+            )
+        ) {
 
-       // MonthlyHorizontalCalendarView(navController)
+            MonthCalendarView(navController) {
+                navController.popBackStack()
+            }
         }
-
+        dialog(
+            Screen.MainApp.AddTagDialog.route, dialogProperties = DialogProperties(
+                dismissOnClickOutside = true,
+                dismissOnBackPress = true
+            )
+        ) {
+            val addTaskViewModel: AddTaskViewModel = hiltViewModel()
+            AddTagDialog(navController, addTaskViewModel)
+        }
+        composable("${Screen.MainApp.TaskByCategory.route}/{tagName}", arguments = listOf(
+            navArgument("tagName") {
+                type = NavType.StringType
+            }
+        )) { navArgument ->
+            val taskViewModel: TaskViewModel = hiltViewModel()
+            val tagWithTaskLists = taskViewModel.tagWithTasks.value.firstOrNull {
+                it.tag.name == navArgument.arguments?.getString(
+                    "tagName"
+                ).orEmpty()
+            }
+            TasksByCategory(tagWithTaskLists, navController)
+        }
     }
 }
 

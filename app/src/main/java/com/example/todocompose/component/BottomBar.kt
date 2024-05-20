@@ -18,6 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.todocompose.navigation.BottomNavigationItem
@@ -31,7 +33,6 @@ fun BottomBar(navController: NavHostController) {
     val navigationSelectedItem = rememberSaveable {
         mutableIntStateOf(0)
     }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -55,14 +56,12 @@ fun BottomBar(navController: NavHostController) {
                             "",
                             modifier = Modifier
                                 .size(75.dp)
+                                .semantics {
+                                    testTag = "Navigate To Add Screen"
+                                }
                                 .clickable {
                                     navigationSelectedItem.value = index
-                                    navController.navigate(bottomNavigationItem.route) {
-                                        popUpToTop(navController)
-                                        launchSingleTop = true
-                                        // Restore state when reselecting a previously selected item
-                                        restoreState = true
-                                    }
+                                    navController.navigate(bottomNavigationItem.route)
                                 },
                             tint = PrimaryColor
                         )
@@ -76,11 +75,13 @@ fun BottomBar(navController: NavHostController) {
                                     navController.navigate(bottomNavigationItem.route) {
                                         popUpToTop(navController)
                                         launchSingleTop = true
-                                        // Restore state when reselecting a previously selected item
                                         restoreState = true
                                     }
                                 }
-                                .padding(12.dp),
+                                .padding(12.dp)
+                                .semantics {
+                                    testTag = bottomNavigationItem.route
+                                },
                             tint = if (navigationSelectedItem.value == index) PrimaryColor else Color.Gray.copy(
                                 0.5f
                             )

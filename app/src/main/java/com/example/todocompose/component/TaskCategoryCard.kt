@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todocompose.R
 
-
 @Composable
 fun TaskCategoryCard(
     title: String,
@@ -51,7 +50,6 @@ fun TaskCategoryCard(
             }
             .shadow(elevation = 22.dp, shape = RoundedCornerShape(16.dp), spotColor = tintColor)
         ,
-
         colors = CardDefaults.cardColors(
             containerColor = tintColor
         ),
@@ -60,7 +58,6 @@ fun TaskCategoryCard(
             modifier = Modifier.fillMaxSize()
         ) {
             // Background image
-
             Image(
                 painter = painterResource(id = R.drawable.home_tag_background),
                 contentDescription = null, // Set appropriate content description

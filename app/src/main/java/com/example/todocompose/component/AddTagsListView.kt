@@ -1,30 +1,39 @@
 package com.example.todocompose.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.todocompose.data.entity.Tags
+import com.example.todocompose.navigation.Screen
 import com.example.todocompose.ui.theme.PrimaryColor
 
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun AddTagsListView(list: List<Tags>, onTagClick: (Tags) -> Unit) {
+fun AddTagsListView(
+    list: List<Tags>,
+    navController: NavController,
+    onTagClick: (MutableSet<Tags>) -> Unit
+) {
+    val selectedItems = remember { mutableSetOf<Tags>() }
+
     Column(modifier = Modifier.wrapContentSize()) {
         Text(
             text = "Tags",
@@ -33,44 +42,46 @@ fun AddTagsListView(list: List<Tags>, onTagClick: (Tags) -> Unit) {
                 .clickable { },
             color = Color.White
         )
-        LazyRow(
-            modifier = Modifier.padding(16.dp),
+        FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(list) {
+            list.forEach {
+                val isSelected = selectedItems.contains(it)
                 Box(
                     Modifier
                         .background(
-                            Color(it.color.toInt()).copy(0.2F),
+                            Color(it.color.toIntOrNull() ?: PrimaryColor.toArgb()).copy(0.2F),
                             shape = RoundedCornerShape(40)
                         )
-                        .border(1.dp, Color(it.color.toInt()), shape = RoundedCornerShape(40))
                         .padding(vertical = 2.dp, horizontal = 8.dp)
-                        .weight(1f)
                         .clickable {
-                            onTagClick.invoke(it)
+                            if (isSelected) {
+                                selectedItems.remove(it)
+                            } else {
+                                selectedItems.add(it)
+                            }
+                            onTagClick.invoke(selectedItems)
                         }
                 ) {
                     Text(
                         text = it.name,
                         modifier = Modifier.padding(8.dp),
-                        color = Color(it.color.toInt())
+                        color = Color(it.color.toIntOrNull() ?: PrimaryColor.toArgb())
                     )
                 }
             }
         }
-
         Text(
             text = "+ Add new tag",
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp)
-
-                .clickable { },
+                .clickable {
+                    navController.navigate(Screen.MainApp.AddTagDialog.route)
+                },
             color = PrimaryColor,
             textAlign = TextAlign.Center
         )
-
     }
 }

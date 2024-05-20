@@ -1,6 +1,5 @@
 package com.example.todocompose.screens.task
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -15,10 +14,11 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.dp
@@ -26,65 +26,101 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.todocompose.component.AddTagsListView
 import com.example.todocompose.component.CustomTextField
-import com.example.todocompose.component.TaskHearderView
-import com.example.todocompose.data.entity.Tags
+import com.example.todocompose.component.TasksHeaderView
+import com.example.todocompose.component.TimePickerDialog
 import com.example.todocompose.navigation.Screen
 import com.example.todocompose.ui.theme.PrimaryColor
 
-
 @Composable
-fun AddTaskScreen(
-    navController: NavHostController,
-    addTask: AddTaskViewModel
-) {
-    val list = listOf(
-        Tags("Home", Color.Red.toArgb().toString()),//
-        Tags("Work", Color.Green.toArgb().toString()),
-        Tags("School", Color.Blue.toArgb().toString()),
-        Tags("Personal", Color.Yellow.toArgb().toString())
-    )
-    LaunchedEffect(Unit) {
-        addTask.addTags(list)
+fun AddTaskScreen(navController: NavHostController, viewModel: AddTaskViewModel) {
+    val allTags = viewModel.allTags.collectAsState(initial = null)
+    val showStartTimeTimeDialog = remember {
+        mutableStateOf(false)
+    }
+
+    val showEndTimeTimeDialog = remember {
+        mutableStateOf(false)
     }
 
     LazyColumn(modifier = Modifier.padding(horizontal = 16.dp)) {
-
         item {
-            TaskHearderView("Add Task")
+            //  header
+            TasksHeaderView("Add Task") {
+                navController.popBackStack()
+            }
         }
+        //task fields
         item {
-            CustomTextField(Modifier, "Title", Color.Gray, addTask.title)
-            CustomTextField(Modifier, "Date", Color.Gray, addTask.taskDate, trailingIcon = {
-                Icon(imageVector = Icons.Outlined.DateRange, "", modifier =
-                Modifier.clickable {
-                    navController.navigate(Screen.MainApp.DateDialog.route)
+            CustomTextField(Modifier, "Title", Color.Gray, viewModel.title)
+            CustomTextField(
+                Modifier,
+                "Date",
+                Color.Gray,
+                viewModel.taskDate,
+                isReadOnly = true,
+                trailingIcon = {
+                    Icon(imageVector = Icons.Outlined.DateRange, "", modifier =
+                    Modifier.clickable {
+                        navController.navigate(Screen.MainApp.DateDialog.route)
+                    })
                 })
-            })
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                CustomTextField(Modifier.weight(1f), "Time From", Color.Gray, addTask.startTime)
-                CustomTextField(Modifier.weight(1f), "Time To", Color.Gray, addTask.endTime)
+                CustomTextField(
+                    Modifier
+                        .weight(1f)
+                        .clickable {
+                            showStartTimeTimeDialog.value = true
+                        },
+                    "Time From", Color.Gray, viewModel.startTime, isReadOnly = true,
+                )
+                CustomTextField(
+                    Modifier
+                        .weight(1f)
+                        .clickable {
+                            showEndTimeTimeDialog.value = true
+                        },
+                    "Time To", Color.Gray, viewModel.endTime, isReadOnly = true,
+                )
             }
-            CustomTextField(Modifier, "Description", Color.Gray, addTask.decsription)
+            CustomTextField(Modifier, "Description", Color.Gray, viewModel.description)
 
         }
         //tags List
         item {
-            AddTagsListView(list) {
-                addTask.category.value = it.name
+            AddTagsListView(allTags.value.orEmpty(), navController) {
+                viewModel.selectedTags.value = it
             }
         }
 
         item {
             //add task button
-            ButtonAddTask(addTask)
+            ButtonAddTask(viewModel)
         }
     }
+    if (showStartTimeTimeDialog.value) {
+        TimePickerDialog(
+            onBackPress = {
+                showStartTimeTimeDialog.value = false
+            },
+            onTimeSelected = { hour, minute ->
+                viewModel.startTime.value = "$hour:$minute"
+            }
+        )
+    }
+    if (showEndTimeTimeDialog.value) {
+        TimePickerDialog(
+            onBackPress = {
+                showEndTimeTimeDialog.value = false
+            },
+            onTimeSelected = { hour, minute ->
+                viewModel.endTime.value = "$hour:$minute"
+            }
+        )
+    }
 }
-
 
 @Composable
 fun ButtonAddTask(addTask: AddTaskViewModel) {

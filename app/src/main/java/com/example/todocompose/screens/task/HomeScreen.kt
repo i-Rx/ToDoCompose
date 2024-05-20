@@ -1,6 +1,8 @@
 package com.example.todocompose.screens.task
 
+import android.net.Uri
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,12 +16,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.CheckCircle
-import androidx.compose.material.icons.twotone.Clear
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,103 +30,129 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.example.todocompose.R
 import com.example.todocompose.component.TaskCard
 import com.example.todocompose.component.TaskCategoryCard
-import com.example.todocompose.data.entity.Tags
 import com.example.todocompose.data.entity.TaskType
+import com.example.todocompose.navigation.Screen
 import com.example.todocompose.ui.theme.Navy
 import com.example.todocompose.ui.theme.PrimaryColor
 import com.google.firebase.auth.FirebaseUser
+import java.time.LocalDate
+
 
 @Composable
-fun HomeScreen(invoke: FirebaseUser?) {
-    LazyColumn(modifier = Modifier
-        .fillMaxSize()
-        .padding(horizontal = 12.dp)
-        .semantics {
-            contentDescription = "Home Screen"
-        })
-    {
+fun HomeScreen(invoke: FirebaseUser?, navController: NavHostController, viewModel: TaskViewModel) {
+    LaunchedEffect(Unit) {
+        viewModel.sortTasksByDate(LocalDate.now().toString())
+    }
+
+    val completedTask = viewModel.completedTasks.collectAsState(initial = null)
+    val cancelledTask = viewModel.cancelledTasks.collectAsState(initial = null)
+    val onGoingTask = viewModel.onGoingTasks.collectAsState(initial = null)
+    val pendingTask = viewModel.pendingTasks.collectAsState(initial = null)
+
+    val tasksList = viewModel.taskWithTags
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 100.dp)
+            .semantics {
+                contentDescription = "Home Screen"
+            }, verticalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
         item {
-            HeaderView(invoke?.displayName.orEmpty())
+            HeaderView(invoke?.displayName.orEmpty(), invoke?.photoUrl)
             Spacer(modifier = Modifier.size(16.dp))
             Text(
-                text = "My Tasks",
+                "My Tasks",
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
                 color = Navy
             )
         }
+        //task Type View
         item {
-            Row(
-                modifier = Modifier.padding(vertical = 4.dp)
-            )
-            {
+            Row(modifier = Modifier.padding(vertical = 4.dp)) {
                 Column(
                     modifier = Modifier
-                        .weight(0.5f)
-                        .padding(vertical = 1.dp)
+                        .weight(0.4f)
+                        .padding(vertical = 12.dp)
                 ) {
                     TaskCategoryCard(
                         TaskType.Completed.type,
-                        "7 Tasks",
+                        completedTask.value?.first()?.tasks?.size.toString().plus("Task"),
                         Color(0xFF7DC8E7),
                         height = 220.dp,
-                        onClick = {},
+                        onClick = {
+                            navController.navigate("${Screen.MainApp.TaskByCategory.route}/${TaskType.Completed.type}")
+
+                        },
                         image = {
                             Image(
                                 painter = painterResource(id = R.drawable.imac),
                                 contentDescription = "",
                                 modifier = Modifier.size(80.dp)
                             )
+
                         })
                     TaskCategoryCard(
-                        TaskType.Canslled.type,
-                        "10 Tasks",
-                        Color(0xFFE77D7D),
+                        TaskType.Pending.type,
+                        pendingTask.value?.first()?.tasks?.size.toString().plus("Task"),
+                        Color(0xFF7D88E7),
                         height = 190.dp,
-                        onClick = { },
+                        onClick = {
+                            navController.navigate("${Screen.MainApp.TaskByCategory.route}/${TaskType.Pending.type}")
+                        },
                         image = {
                             Icon(
-                                imageVector = Icons.TwoTone.Clear,
+                                imageVector = Icons.TwoTone.CheckCircle,
                                 contentDescription = "",
                                 tint = Color.White,
                                 modifier = Modifier.size(40.dp)
+
                             )
                         })
                 }
+                /////
                 Column(
                     modifier = Modifier
-                        .weight(.5f)
-                        .padding(8.dp)
+                        .weight(0.4f)
+                        .padding(vertical = 12.dp)
                 ) {
                     TaskCategoryCard(
-                        TaskType.Pending.type,
-                        "6 Tasks",
-                        Color(0xFF7D88E7),
+                        TaskType.Cancelled.type,
+                        cancelledTask.value?.first()?.tasks?.size.toString().plus("Task"),
+                        Color(0xFFE77D7D),
                         height = 190.dp,
-                        onClick = { },
+                        onClick = {
+                            navController.navigate("${Screen.MainApp.TaskByCategory.route}/${TaskType.Cancelled.type}")
+                        },
                         image = {
                             Icon(
-                                painterResource(id = R.drawable.time),
+                                imageVector = Icons.TwoTone.CheckCircle,
                                 contentDescription = "",
                                 tint = Color.White,
                                 modifier = Modifier.size(40.dp)
+
                             )
                         })
                     TaskCategoryCard(
-                        TaskType.Ongoing.type,
-                        "15 Tasks",
+                        TaskType.OnGoing.type,
+                        onGoingTask.value?.first()?.tasks?.size.toString().plus("Task"),
                         Color(0xFF81E89E),
                         height = 220.dp,
-                        onClick = {},
+                        onClick = {
+                            navController.navigate("${Screen.MainApp.TaskByCategory.route}/${TaskType.OnGoing.type}")
+
+                        },
                         image = {
                             Image(
                                 painter = painterResource(id = R.drawable.imac),
@@ -133,16 +161,20 @@ fun HomeScreen(invoke: FirebaseUser?) {
                             )
                         })
                 }
+
             }
         }
+        //today task view
         item {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp),
+                    .padding(vertical = 24.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Absolute.SpaceBetween
+
             ) {
+
                 Text(
                     "Today Tasks",
                     fontWeight = FontWeight.Bold,
@@ -152,29 +184,24 @@ fun HomeScreen(invoke: FirebaseUser?) {
                 Text(
                     "View all",
                     modifier = Modifier
-                        .padding(top = 8.dp),
+                        .padding(top = 8.dp)
+                        .clickable {
+                            navController.navigate(Screen.MainApp.TaskByDate.route)
+                        },
                     fontSize = 12.sp,
                     color = PrimaryColor
                 )
             }
         }
-        items(5){
-            TaskCard(
-                taskTitle = "Task $it" ,
-                timeFrom ="10:00" ,
-                timeTo = "11:00",
-                tag = Tags(
-                    "Work",
-                    "Blue"))
-
-            Spacer(modifier = Modifier.padding(4.dp))
+        items(tasksList.value) {
+            TaskCard(taskTitle = it.task.title, timeFrom = it.task.timeFrom, timeTo = it.task.timeTo, tag = it.tags)
         }
     }
 }
 
 
 @Composable
-fun HeaderView(userName: String) {
+fun HeaderView(userName: String, photo: Uri?) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -211,18 +238,25 @@ fun HeaderView(userName: String) {
             ),
 
             ) {
-            Image(
-                painter = painterResource(id = R.drawable.user_avatar_male),
-                contentDescription = "profile picture",
-                modifier = Modifier.size(64.dp),
-                contentScale = ContentScale.Crop,
-
-
+            //todo use coil
+            if (photo.toString().isEmpty()) {
+                Image(
+                    painter = painterResource(id = R.drawable.user_avatar_male),
+                    contentDescription = "profile picture",
+                    modifier = Modifier.size(64.dp),
+                    contentScale = ContentScale.Crop
                 )
+            } else {
+                AsyncImage(
+                    model = photo,
+                    contentDescription = "profile picture",
+                    modifier = Modifier.size(64.dp),
+                    contentScale = ContentScale.Crop
+                )
+            }
         }
     }
 }
-
 
 //
 //    val viewModel: TaskViewModel = hiltViewModel()

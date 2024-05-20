@@ -39,7 +39,7 @@ class TaskDaoTest {
         title = "title",
         description = "description",
         date = "2024-01-01",
-        taskType = TaskType.Ongoing.type,
+        taskType = TaskType.OnGoing.type,
         timeFrom = "4:00",
         timeTo = "5:00",
         tagName = "Work"
@@ -78,7 +78,7 @@ class TaskDaoTest {
             title = "title2",
             description = "description",
            date = java.time.LocalDate.now().toString(),
-            taskType = TaskType.Ongoing.type,
+            taskType = TaskType.OnGoing.type,
             timeFrom = "10:00",
             timeTo = "11:00",
             tagName = "Personal"
@@ -88,7 +88,7 @@ class TaskDaoTest {
             title = "title2",
             description = "description",
             date = java.time.LocalDate.now().toString(),
-            taskType = TaskType.Ongoing.type,
+            taskType = TaskType.OnGoing.type,
             timeFrom = "10:00",
             timeTo = "11:00",
             tagName = "Personal"
@@ -154,7 +154,7 @@ class TaskDaoTest {
             title = "title",
             description = "description",
             date = java.time.LocalDate.now().toString(),
-            taskType = TaskType.Ongoing.type,
+            taskType = TaskType.OnGoing.type,
             timeFrom = "10:00",
             timeTo = "11:00",
             tagName = "Personal"
@@ -164,7 +164,7 @@ class TaskDaoTest {
             title = "title",
             description = "description",
             date = java.time.LocalDate.now().toString(),
-            taskType = TaskType.Ongoing.type,
+            taskType = TaskType.OnGoing.type,
             timeFrom = "10:00",
             timeTo = "11:00",
             tagName = "Personal"
