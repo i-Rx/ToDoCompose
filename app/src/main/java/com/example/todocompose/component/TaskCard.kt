@@ -41,7 +41,6 @@ fun TaskCard(taskTitle: String, timeFrom: String?, timeTo: String?, tag: List<Ta
     val dividerHeight = remember {
         mutableStateOf(50.dp)
     }
-
     Card(
         modifier = Modifier
             .fillMaxWidth(),
@@ -73,13 +72,6 @@ fun TaskCard(taskTitle: String, timeFrom: String?, timeTo: String?, tag: List<Ta
                     )
                     Column(modifier = Modifier
                         .padding(4.dp)
-//                        .drawBehind {
-//                            drawLine(
-//                                Color(tag?.color?.toIntOrNull() ?: PrimaryColor.toArgb()),
-//                                Offset(0f, 0F),
-//                                Offset(0F, size.height),
-//                                2.dp.toPx(),)
-//                        }
                         .onGloballyPositioned {
                             dividerHeight.value = it.size.height.dp / 2
                         }) {

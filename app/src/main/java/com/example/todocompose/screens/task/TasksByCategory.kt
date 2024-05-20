@@ -27,7 +27,6 @@ fun TasksByCategory(tagWithTaskLists: TagWithTaskLists?, navController: NavHostC
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(tagWithTaskLists?.tasks.orEmpty()) {
-
                 TaskCard(
                     taskTitle = it.title,
                     it.timeFrom,
