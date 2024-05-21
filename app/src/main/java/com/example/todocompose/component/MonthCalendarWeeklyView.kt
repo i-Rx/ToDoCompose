@@ -55,9 +55,9 @@ fun MonthCalendarView(navController: NavHostController, onBackPress: () -> Boole
     val currentMonth = remember { YearMonth.now() }
     val startMonth = remember { currentMonth.minusMonths(100) } // Adjust as needed
     val endMonth = remember { currentMonth.plusMonths(100) } // Adjust as needed
-    val firstDayOfWeek = remember { DayOfWeek.MONDAY } // Available from the library
+    val firstDayOfWeek = remember { DayOfWeek.SUNDAY } // Available from the library
     var selectedDate by remember { mutableStateOf<LocalDate?>(LocalDate.now()) }
-    val daysOfWeek = daysOfWeek(firstDayOfWeek = DayOfWeek.THURSDAY)
+    val daysOfWeek = daysOfWeek(firstDayOfWeek = DayOfWeek.SUNDAY)
 
     val state = rememberCalendarState(
         startMonth = startMonth,
