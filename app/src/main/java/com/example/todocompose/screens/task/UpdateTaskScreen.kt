@@ -1,5 +1,6 @@
 package com.example.todocompose.screens.task
 
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -24,6 +25,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import com.example.todocompose.component.AddTagsListView
 import com.example.todocompose.component.CustomTextField
@@ -32,13 +34,26 @@ import com.example.todocompose.component.TimePickerDialog
 import com.example.todocompose.navigation.Screen
 import com.example.todocompose.ui.theme.PrimaryColor
 
-@Composable
-fun AddTaskScreen(navController: NavHostController, viewModel: TaskViewModel) {
 
+@Composable
+fun UpdateTaskScreen(
+    navController: NavHostController,
+    viewModel: TaskViewModel,
+    taskId: Long?,
+    navBackStackEntry: NavBackStackEntry
+) {
     LaunchedEffect(Unit) {
         viewModel.getAllTag()
+        if (taskId != null) {
+            viewModel.getSelectedTask(taskId)
+        }
     }
+    if (navBackStackEntry.savedStateHandle.get<String>("selectedDate")?.isNotEmpty() == true) {
+        viewModel.taskDate.value = navBackStackEntry.savedStateHandle.get<String>("selectedDate")!!
+    }
+
     val allTags = viewModel.allTags.collectAsState()
+
 
     val showStartTimeTimeDialog = remember {
         mutableStateOf(false)
@@ -51,7 +66,7 @@ fun AddTaskScreen(navController: NavHostController, viewModel: TaskViewModel) {
     LazyColumn(modifier = Modifier.padding(horizontal = 16.dp)) {
         item {
             //  header
-            TasksHeaderView("Add Task") {
+            TasksHeaderView("Update Task") {
                 navController.popBackStack()
             }
         }
@@ -103,8 +118,8 @@ fun AddTaskScreen(navController: NavHostController, viewModel: TaskViewModel) {
         }
 
         item {
-            //add task button
-            ButtonAddTask(navController,viewModel)
+            //update task button
+            ButtonUpdateTask(navController,viewModel, taskId)
         }
     }
     if (showStartTimeTimeDialog.value) {
@@ -130,11 +145,13 @@ fun AddTaskScreen(navController: NavHostController, viewModel: TaskViewModel) {
 }
 
 @Composable
-fun ButtonAddTask(navController: NavHostController ,addTask: TaskViewModel) {
+fun ButtonUpdateTask(navController: NavHostController, addTask: TaskViewModel, taskId: Long?) {
     Button(
         onClick = {
-            addTask.addTask()
-            navController.popBackStack()
+            if (taskId != null) {
+                addTask.updateTask(taskId)
+                navController.popBackStack()
+            }
         },
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
@@ -142,14 +159,14 @@ fun ButtonAddTask(navController: NavHostController ,addTask: TaskViewModel) {
             .padding(22.dp)
             .padding(bottom = 100.dp)
             .semantics {
-                testTag = "Add Task Button"
+                testTag = "Update Task Button"
             },
         colors = ButtonDefaults.buttonColors(
             containerColor = PrimaryColor
         )
     ) {
         Text(
-            modifier = Modifier.padding(vertical = 8.dp), text = "Create",
+            modifier = Modifier.padding(vertical = 8.dp), text = "Update",
             fontSize = 16.sp,
             color = Color.White
         )

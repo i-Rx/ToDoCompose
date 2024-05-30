@@ -14,6 +14,7 @@ import com.example.todocompose.ui.theme.LightBlue
 import com.example.todocompose.ui.theme.LightGreen
 import com.example.todocompose.ui.theme.LightPurple
 import com.example.todocompose.ui.theme.LightRed
+import kotlin.time.Duration
 
 
 @Entity(tableName = "task_table")
@@ -37,9 +38,19 @@ data class Task(
     val tagName: String = ""
 )
 
-enum class TaskType(val type: String, val color: String, val icon: String) {
+enum class TaskType(val type: String, val color: String, val icon: String, val isSelected: Boolean? = false) {
     Pending("Pending", LightPurple.toArgb().toString(), getIconName(Icons.Outlined.DateRange)),
     OnGoing("On Going", LightGreen.toArgb().toString(), getIconName(Icons.Outlined.Build)),
     Cancelled("Cancelled", LightRed.toArgb().toString(), getIconName(Icons.Outlined.Delete)),
     Completed("Completed", LightBlue.toArgb().toString(), getIconName(Icons.Outlined.Done)),
 }
+
+data class SearchResults(
+    val taskResults : List<TaskWithTags>,
+    val tagResult: List<TagWithTaskLists>
+)
+
+data class AggregatedData(
+    val date : String,
+    val totalDuration: Int
+)

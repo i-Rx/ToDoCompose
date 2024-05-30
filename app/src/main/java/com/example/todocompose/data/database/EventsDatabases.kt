@@ -11,30 +11,26 @@ import com.example.todocompose.data.entity.Tags
 import com.example.todocompose.data.entity.Task
 import com.example.todocompose.data.entity.TaskTagCrossRef
 
-
-@Database(
-    entities = [Task::class, Tags::class, TaskTagCrossRef::class],
-    version = 3,
-    exportSchema = false
-)
-abstract class EventsDatabase : RoomDatabase() {
+    @Database(
+    entities = [Task::class, Tags::class,
+    TaskTagCrossRef::class],
+    version = 4,
+    exportSchema = false)
+    abstract class EventsDatabase : RoomDatabase() {
 
     abstract fun taskDao(): TaskDao
 
     companion object {
-
         @Volatile
         private var INSTANCE: EventsDatabase? = null
 
         fun getDatabase(context: Context): EventsDatabase {
-
             val MIGRATION_1_2 = object : Migration(1, 2) {
 
                 override fun migrate(db: SupportSQLiteDatabase) {
                     db.execSQL("ALTER TABLE tags_table ADD COLUMN icon_name TEXT NOT NULL DEFAULT ''")
                 }
             }
-
             val MIGRATION_2_3 = object : Migration(2, 3) {
 
                 override fun migrate(db: SupportSQLiteDatabase) {
@@ -46,14 +42,17 @@ abstract class EventsDatabase : RoomDatabase() {
                     )
                 }
             }
-
+            val MIGRATION_3_4 = object : Migration(3, 4) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL("ALTER TABLE tags_table ADD COLUMN isSelected INTEGER DEFAULT 0 NOT NULL")
+                }
+            }
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     EventsDatabase::class.java,
                     "events_database"
-                )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3,MIGRATION_3_4)
                     .fallbackToDestructiveMigration().build()
                 INSTANCE = instance
                 instance

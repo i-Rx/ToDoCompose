@@ -39,7 +39,7 @@ import com.example.todocompose.ui.theme.PrimaryColor
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun AddTagDialog(navController: NavHostController, addTaskViewModel: AddTaskViewModel) {
+fun AddTagDialog(navController: NavHostController, addTaskViewModel: TaskViewModel) {
     Box(
         Modifier
             .padding(16.dp)

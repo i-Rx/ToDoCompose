@@ -56,7 +56,7 @@ android {
 }
 
 dependencies {
-
+        // room
     implementation("androidx.room:room-runtime:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
@@ -110,6 +110,11 @@ dependencies {
     testImplementation ("androidx.arch.core:core-testing:2.1.0")
     // Firebase Authentication
     implementation ("com.google.firebase:firebase-auth:21.0.1")
+
+
+    implementation("com.patrykandpatrick.vico:compose:2.0.0-alpha.20")
+    implementation("com.patrykandpatrick.vico:compose-m3:2.0.0-alpha.20")
+    implementation("com.patrykandpatrick.vico:core:2.0.0-alpha.20")
 
 
 

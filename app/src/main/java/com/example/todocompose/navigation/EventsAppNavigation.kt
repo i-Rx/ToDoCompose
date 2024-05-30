@@ -1,11 +1,12 @@
 package com.example.todocompose.navigation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
+
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,11 +29,17 @@ import com.example.todocompose.screens.auth.SpalshScreen
 import com.example.todocompose.screens.task.AddTagDialog
 import com.example.todocompose.screens.task.AddTaskScreen
 import com.example.todocompose.screens.task.CategoryScreen
-import com.example.todocompose.screens.task.AddTaskViewModel
+import com.example.todocompose.screens.task.SettingsScreen
 import com.example.todocompose.screens.task.TaskByDateScreen
 import com.example.todocompose.screens.task.TaskViewModel
 import com.example.todocompose.screens.task.TasksByCategory
+import com.example.todocompose.screens.task.UpdateTaskScreen
 import com.google.firebase.auth.FirebaseUser
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlin.random.Random
 
 
 @Composable
@@ -54,7 +61,6 @@ fun EventsAppNavigation(
     }
 }
 
-
 fun NavGraphBuilder.authNavigation(
     navController: NavHostController,
     authViewModel: AuthViewModel
@@ -69,7 +75,6 @@ fun NavGraphBuilder.authNavigation(
         composable(Screen.Authenticaion.SignUp.route) {
             SingUpScreen(navController, authViewModel)
         }
-
         composable(Screen.Authenticaion.Login.route) {
             LoginScreen(navController, authViewModel)
         }
@@ -93,7 +98,7 @@ fun NavGraphBuilder.mainAppNavigation(
 
         composable(Screen.MainApp.TaskByDate.route) {
             val viewmodel: TaskViewModel = hiltViewModel()
-            TaskByDateScreen(viewmodel)
+            TaskByDateScreen(viewmodel, navController)
         }
 
         composable(Screen.MainApp.CategoryScreen.route) {
@@ -102,18 +107,33 @@ fun NavGraphBuilder.mainAppNavigation(
         }
 
         composable(Screen.MainApp.AddScreen.route) {
-            val viewmodel: AddTaskViewModel = hiltViewModel()
-            viewmodel.taskDate.value = it.savedStateHandle.get<String>("selectedDate").orEmpty()
+            val viewmodel: TaskViewModel = hiltViewModel()
+                     viewmodel.taskDate.value = it.savedStateHandle.get<String>("selectedDate").orEmpty()
             AddTaskScreen(navController, viewmodel)
         }
 
         composable(Screen.MainApp.StaticsScreen.route) {
-            Column(
+            val viewmodel: TaskViewModel = hiltViewModel()
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Green)
             ) {
-
+                item {
+                    val modelProducer = remember { CartesianChartModelProducer.build() }
+                    val x = (1..50).toList()
+                    LaunchedEffect(Unit) {
+                        withContext(Dispatchers.Default) {
+                            modelProducer.tryRunTransaction {
+                                lineSeries {
+                                    series(x, x.map { Random.nextFloat() * 15 })
+                                }
+                            }
+                        }
+                    }
+//                    val tags = viewmodel.allTags.collectAsState()
+//                    ComposeChart7(tags.value, modelProducer, Modifier.size(300.dp))
+//                    ComposeChart10(Modifier.size(300.dp))
+                }
             }
         }
         dialog(
@@ -133,21 +153,35 @@ fun NavGraphBuilder.mainAppNavigation(
                 dismissOnBackPress = true
             )
         ) {
-            val addTaskViewModel: AddTaskViewModel = hiltViewModel()
+            val addTaskViewModel: TaskViewModel = hiltViewModel()
             AddTagDialog(navController, addTaskViewModel)
         }
+
         composable("${Screen.MainApp.TaskByCategory.route}/{tagName}", arguments = listOf(
             navArgument("tagName") {
                 type = NavType.StringType
             }
         )) { navArgument ->
             val taskViewModel: TaskViewModel = hiltViewModel()
-            val tagWithTaskLists = taskViewModel.tagWithTasks.value.firstOrNull {
-                it.tag.name == navArgument.arguments?.getString(
-                    "tagName"
-                ).orEmpty()
-            }
-            TasksByCategory(tagWithTaskLists, navController)
+            TasksByCategory(
+                navController,
+                taskViewModel,
+                navArgument.arguments?.getString("tagName")
+            )
+        }
+
+        composable(
+            "${Screen.MainApp.UpdateTask.route}/{taskId}", arguments =
+            listOf(navArgument("taskId") {
+                type = NavType.LongType
+            })
+        ) {
+            val viewmodel: TaskViewModel = hiltViewModel()
+             UpdateTaskScreen(navController, viewmodel, it.arguments?.getLong("taskId"), it)
+        }
+
+        composable(Screen.MainApp.Settings.route) {
+             SettingsScreen(navController)
         }
     }
 }

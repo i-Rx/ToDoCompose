@@ -4,8 +4,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.Settings
@@ -22,7 +20,8 @@ sealed class Screen(val route: String) {
         data object DateDialog : Screen(route = "DateDialog")
         data object AddTagDialog: Screen("AddTagDialog")
         data object TaskByCategory: Screen("TaskByCategory")
-        data object TimeDialog: Screen("TimeDialog")
+        data object UpdateTask : Screen("update_task_screen")
+        data object Settings : Screen("settings_screen")
     }
 
     data object Authenticaion : Screen("authGraph"){
@@ -37,7 +36,6 @@ data class BottomNavigationItem(
     val route: String =""
 ){
 
-    //function to get the list of bottomNavigationItems
     fun bottomNavigationItems() : List<BottomNavigationItem> {
         return listOf(
             BottomNavigationItem(

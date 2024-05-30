@@ -2,6 +2,7 @@ package com.example.todocompose.component
 
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,12 +12,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,13 +34,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.todocompose.R
+import com.example.todocompose.navigation.Screen
 import com.example.todocompose.ui.theme.Navy
 import com.google.firebase.auth.FirebaseUser
 
 @Composable
-fun UserImageWithEmail(user: FirebaseUser?) {
+fun UserImageWithEmail(user: FirebaseUser? , navController: NavHostController, logout: () -> Unit) {
+    val showDropDown = rememberSaveable { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -58,8 +70,10 @@ fun UserImageWithEmail(user: FirebaseUser?) {
                 elevation = CardDefaults.cardElevation(
                     defaultElevation = 16.dp
                 ),
-
-                ) {
+                onClick = {
+                    showDropDown.value = true
+                }
+            ) {
                 Icon(
                     Icons.Outlined.Menu,
                     contentDescription = "Menu",
@@ -68,6 +82,13 @@ fun UserImageWithEmail(user: FirebaseUser?) {
                         .fillMaxSize()
                         .padding(16.dp),
                 )
+                SettingsMenu(showDropDown, settings = {
+                    navController.navigate(Screen.MainApp.Settings.route)
+                    showDropDown.value = false
+                }, logout = {
+                    logout.invoke()
+                    showDropDown.value = false
+                })
             }
         }
         Card(
@@ -112,5 +133,36 @@ fun UserImageWithEmail(user: FirebaseUser?) {
             fontSize = 14.sp,
             color = Color.DarkGray
         )
+    }
+}
+
+@Composable
+fun SettingsMenu(showDropDown : MutableState<Boolean>, settings: () -> Unit, logout: () -> Unit){
+    DropdownMenu(
+        modifier = Modifier.padding(12.dp),
+        expanded = showDropDown.value,
+        onDismissRequest = {
+            showDropDown.value = false
+        }) {
+        Row (
+            horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.clickable {
+                settings.invoke()
+            })
+        {
+            Icon(Icons.Outlined.Settings, contentDescription = "")
+            Text(text = "Settings", modifier = Modifier.padding(12.dp))
+        }
+        HorizontalDivider()
+        Row (
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.clickable {
+                logout.invoke()
+            })
+        {
+            Icon(Icons.Outlined.Delete, contentDescription = "")
+            Text(text = "Log out", modifier = Modifier.padding(12.dp))
+        }
     }
 }

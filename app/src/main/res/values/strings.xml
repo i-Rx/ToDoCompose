@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ToDo Compose</string>
+    <string name="hi">Hello</string>
 </resources>

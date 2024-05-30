@@ -1,6 +1,8 @@
 package com.example.todocompose.data.repository
 
+import androidx.room.Query
 import com.example.todocompose.data.dao.TaskDao
+import com.example.todocompose.data.entity.SearchResults
 import com.example.todocompose.data.entity.TagWithTaskLists
 import com.example.todocompose.data.entity.Tags
 import com.example.todocompose.data.entity.Task
@@ -37,7 +39,7 @@ class TaskRepository @Inject constructor(
         taskDao.deleteTag(tag)
     }
 
-    fun getTagWithTasksList(tagName: String): Flow<List<TagWithTaskLists>> {
+    fun getTagWithTasksList(tagName: String): Flow<TagWithTaskLists> {
         return taskDao.getTagsWithTask(tagName)
     }
 
@@ -54,4 +56,20 @@ class TaskRepository @Inject constructor(
     }
 
     fun getTagWithTaskLists() = taskDao.getTagWithTaskLists()
+
+    suspend fun searchCombined(searchQuery: String): SearchResults{
+        return taskDao.searchCombined(searchQuery)
+    }
+
+    suspend fun getTaskWithTagsById(taskId:Long) = taskDao.getTaskWithTagsById(taskId)
+
+    fun getAllTaskWithTags() = taskDao.getAllTaskWithTags()
+
+    suspend fun updateTaskWithTags(task :Task , tags: List<Tags>){
+        taskDao.updateTaskWithTags(task,tags)
+    }
+
+    suspend fun getAllTasksWithTags(): List<TaskWithTags>{
+        return taskDao.getAllTasksWithTags()
+    }
 }

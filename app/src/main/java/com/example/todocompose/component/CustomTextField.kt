@@ -10,6 +10,10 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon.Companion.Text
@@ -26,11 +30,13 @@ fun CustomTextField(
     trailingIcon: @Composable (() -> Unit)? = null,
     isReadOnly :Boolean = false,
 ) {
+    var isTitleValid by remember { mutableStateOf(true) }
+
     Column(modifier = modifier.padding(vertical = 12.dp)) {
         Text(
             label,
-            Modifier.padding(end = 20.dp, start = 20.dp),
-            style = TextStyle(color = textColor, fontSize = 16.sp),
+            modifier = Modifier.padding(end = 20.dp, start = 20.dp),
+            style = TextStyle(color = textColor, fontSize = 16.sp)
             )
         TextField(
             modifier = Modifier
@@ -49,7 +55,9 @@ fun CustomTextField(
             value = value.value,
             onValueChange = {
                 value.value = it
-            }
+                isTitleValid = it.isNotBlank()
+            },
+            isError = !isTitleValid,
         )
     }
 }
